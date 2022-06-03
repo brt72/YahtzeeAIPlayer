@@ -383,7 +383,6 @@ def prob_fh(dice_list):
         probability = (6 + 10*6*5)/(6^5)
     return(points, probability)
 
-# Small Straight
 def prob_ss(dice_list):
     all_freq = [check_num_freq(dice_list,1), check_num_freq(dice_list,2), check_num_freq(dice_list,3), check_num_freq(dice_list,4), check_num_freq(dice_list,5), check_num_freq(dice_list,6)]
     first = [0,0,0,0] # 1, 2, 3, 4
@@ -420,6 +419,42 @@ def prob_ss(dice_list):
         probability = (1/2)*((1/3)*((1/6)+(5/6)*(1/6))+(2/3)*(1/3)*(1/6))+(1/2)*(1/2)*(1/3)*(1/6)
 
 # Large Straight
+def prob_ls(dice_list):
+    all_freq = [check_num_freq(dice_list,1), check_num_freq(dice_list,2), check_num_freq(dice_list,3), check_num_freq(dice_list,4), check_num_freq(dice_list,5), check_num_freq(dice_list,6)]
+    first = [0,0,0,0,0] # 1, 2, 3, 4, 5
+    last = [0,0,0,0,0] # 2, 3, 4, 5, 6
+    if all_freq[0] > 0:
+        first[0]+=1
+    if all_freq[1] > 0:
+        first[1]+=1
+        last[0]+=1
+    if all_freq[2] > 0:
+        first[2]+=1
+        last[1]+=1    
+    if all_freq[3] > 0:
+        first[3]+=1
+        last[2]+=1
+    if all_freq[4] > 0:
+        first[4]
+        last[3]+=1
+    if all_freq[5] > 0:
+        last[4]+=1
+
+    if sum(first) == 5 or sum(last) == 5:
+        probability = 1
+    elif first == [0,1,1,1,1] and last == [1,1,1,1,0]:
+        probability = 1/3
+    elif sum(first) == 4 or sum(last) == 4:
+        probability = 1/6
+    elif (first == [0,0,1,1,1] and last == [0,1,1,1,0]) or (first == [0,1,1,1,0] and last == [1,1,1,0,0]):
+        probability = (1/3)*(1/3)
+    elif sum(first) == 3 or sum(last) == 3:
+        probability = (1/3)*(1/6)
+    elif sum(first) == 2 or sum(last) == 2:
+        probability = (1/2)*(1/3)*(1/6)
+    else:
+        probability = (2/3)*(1/2)*(1/3)*(1/6)
+
 
 def prob_yacht(dice_list):
     max_freq = check_max_freq(dice_list)
