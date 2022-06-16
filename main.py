@@ -1,6 +1,5 @@
 import random
 from enum import Enum
-from tkinter.messagebox import YESNOCANCEL
 
 class Hand(Enum):
     Nothing = 0
@@ -73,7 +72,7 @@ class PlayCard():
         return this.tok
     
     def setToK(this, value):
-        this.ones = value
+        this.tok = value
 
     def getFoK(this):
         return this.fok
@@ -172,31 +171,31 @@ class PlayCard():
 
     def availableHands(this):
         availableHands = []
-        if this.getOnes() != -1:
+        if this.getOnes() == -1:
             availableHands.append(Hand.Ones)
-        if this.getTwos() != -1:
+        if this.getTwos() == -1:
             availableHands.append(Hand.Twos)
-        if this.getThrees() != -1:
+        if this.getThrees() == -1:
             availableHands.append(Hand.Threes)
-        if this.getFours() != -1:
+        if this.getFours() == -1:
             availableHands.append(Hand.Fours)
-        if this.getFives() != -1:
+        if this.getFives() == -1:
             availableHands.append(Hand.Fives)
-        if this.getSixes() != -1:
+        if this.getSixes() == -1:
             availableHands.append(Hand.Sixes)
-        if this.getToK() != -1:
+        if this.getToK() == -1:
             availableHands.append(Hand.ToK)
-        if this.getFoK() != -1:
+        if this.getFoK() == -1:
             availableHands.append(Hand.FoK)
-        if this.getFullHouse() != -1:
+        if this.getFullHouse() == -1:
             availableHands.append(Hand.FH)
-        if this.getSmallStraight() != -1:
+        if this.getSmallStraight() == -1:
             availableHands.append(Hand.SS)
-        if this.getLargeStraight() != -1:
+        if this.getLargeStraight() == -1:
             availableHands.append(Hand.LS)
-        if this.getYacht() != -1:
+        if this.getYacht() == -1:
             availableHands.append(Hand.Yacht)
-        if this.getChance() != -1:
+        if this.getChance() == -1:
             availableHands.append(Hand.Yacht)      
         return availableHands
 
@@ -491,9 +490,10 @@ def prob_ls(dice_list):
 def prob_yacht(dice_list):
     points = 0
     max_freq = check_max_freq(dice_list)
-    if max_freq == 5:
+    if max_freq[1] == 5:
         points = 50
-    return (points, 1/(6^(5-max_freq)))
+    probability = 1/(6^(5-max_freq[1]))
+    return (points, probability)
 
     
 def take_turn(card):
@@ -501,14 +501,15 @@ def take_turn(card):
     mark_card = True
     held_dice = []
     hand_type = Hand.Nothing
-    available_hands = card.availableHands
-    while(turns_left > 0 and mark_card):
+    available_hands = card.availableHands()
+    while turns_left > 0 and mark_card:
         potential_hands = []
 
         # Roll Dice
         new_dice = roll(5-len(held_dice))
         total_dice = held_dice + new_dice
-        total_dice.sort()        
+        total_dice.sort() 
+        print(total_dice)       
         held_dice = []
         
         # Determine Strategy
@@ -542,17 +543,17 @@ def take_turn(card):
                     max_hand = hand
             hand_type = max_hand
             if hand_type == Hand.Yacht:
-                mark_card == False
+                mark_card = False
                 card.setYacht(check_yacht(total_dice))
             elif hand_type == Hand.LS:
-                mark_card == False
+                mark_card = False
                 card.setLargeStraight(check_large_straight(total_dice))
             elif hand_type == Hand.FH:
-                mark_card == False
+                mark_card = False
                 card.setFullHouse(check_full_house(total_dice))
             elif hand_type == Hand.SS:
                 if turns_left == 1 or Hand.LS not in available_hands:
-                    mark_card == False
+                    mark_card = False
                     card.setSmallStraight(check_small_straight(total_dice))
                 else:
                     if total_dice[0] == 1:
@@ -563,6 +564,7 @@ def take_turn(card):
                         held_dice = [2,3,4,5]
             elif hand_type == Hand.FoK:
                 fok_num = total_dice[2]
+                print(fok_num)
                 if fok_num == 1:
                     fok_hand = Hand.Ones
                 elif fok_num == 2:
@@ -595,6 +597,7 @@ def take_turn(card):
                     held_dice = [fok_num, fok_num, fok_num, fok_num]
             elif hand_type == Hand.ToK:
                 tok_num = total_dice[2]
+                print(tok_num)
                 if tok_num == 1:
                     tok_hand = Hand.Ones
                 elif tok_num == 2:
@@ -608,7 +611,7 @@ def take_turn(card):
                 else:
                     tok_hand = Hand.Sixes
                 if turns_left == 1:
-                    if max_prob[0] <= 15 and tok_hand in available_hands:
+                    if max_points <= 15 and tok_hand in available_hands:
                         if tok_hand == Hand.Ones:
                             card.setOnes(check_ones(total_dice))
                         elif tok_hand == Hand.Twos:
@@ -622,61 +625,61 @@ def take_turn(card):
                         else:
                             card.setSixes(check_sixes(total_dice))
                     else:
-                        card.settok(check_four_kind(total_dice))
+                        card.setToK(check_three_kind(total_dice))
                 else:
                     held_dice = [tok_num, tok_num, tok_num]
             elif hand_type == Hand.Sixes:
                 if turns_left == 1 or total_dice[0] == total_dice[4]:
                     card.setSixes(check_sixes(total_dice))
-                    mark_card == False
+                    mark_card = False
                 else:
                     first_index = total_dice.index(6)
-                    held_dice = total_dice[first_index, 4]
+                    held_dice = total_dice[first_index:5]
             elif hand_type == Hand.Fives:
                 if turns_left == 1 or total_dice[0] == total_dice[4]:
                     card.setFives(check_fives(total_dice))
-                    mark_card == False
+                    mark_card = False
                 else:
                     first_index = total_dice.index(5)
                     freq = total_dice.count(5)
-                    held_dice = total_dice[first_index, first_index+freq-1]
+                    held_dice = total_dice[first_index:first_index+freq]
             elif hand_type == Hand.Fours:
                 if turns_left == 1 or total_dice[0] == total_dice[4]:
                     card.setFours(check_fours(total_dice))
-                    mark_card == False
+                    mark_card = False
                 else:
                     first_index = total_dice.index(4)
                     freq = total_dice.count(4)
-                    held_dice = total_dice[first_index, first_index+freq-1]
+                    held_dice = total_dice[first_index:first_index+freq]
             elif hand_type == Hand.Threes:
                 if turns_left == 1 or total_dice[0] == total_dice[4]:
                     card.setThrees(check_threes(total_dice))
-                    mark_card == False
+                    mark_card = False
                 else:
                     first_index = total_dice.index(3)
                     freq = total_dice.count(3)
-                    held_dice = total_dice[first_index, first_index+freq-1]
+                    held_dice = total_dice[first_index:first_index+freq]
             elif hand_type == Hand.Twos:
                 if turns_left == 1 or total_dice[0] == total_dice[4]:
                     card.setTwos(check_twos(total_dice))
-                    mark_card == False
+                    mark_card = False
                 else:
                     first_index = total_dice.index(2)
                     freq = total_dice.count(2)
-                    held_dice = total_dice[first_index, first_index+freq-1]
+                    held_dice = total_dice[first_index:first_index+freq]
             elif hand_type == Hand.Ones:
                 if turns_left == 1 or total_dice[0] == total_dice[4]:
                     card.setOnes(check_ones(total_dice))
-                    mark_card == False
+                    mark_card = False
                 else:
                     freq = total_dice.count(1)
-                    held_dice = total_dice[0, freq-1]
+                    held_dice = total_dice[0:freq]
 
 
         # If not, and a Strategy has not been decided, find the highest probability hand
         else:
-            max_prob = prob_dict[available_hands[0]][1]
             max_hand = available_hands[0]
+            max_prob = prob_dict[max_hand][1]
             for hand in available_hands:
                 if prob_dict[hand][1] > max_prob:
                     max_prob = prob_dict[hand][1]
@@ -773,29 +776,148 @@ def take_turn(card):
                     if state == 102:
                         if total_dice[0] == total_dice[1]:
                             if total_dice[2] == total_dice[3]:
-                                held_dice = total_dice[0,3]
+                                held_dice = total_dice[0:4]
                             else:
-                                held_dice = total_dice[0,1] + total_dice[3,4]
+                                held_dice = total_dice[0:2] + total_dice[3:5]
                         else:
-                            held_dice = total_dice[1,4]
+                            held_dice = total_dice[1:5]
                     elif state == 103:
                         if total_dice[0] == total_dice[2] or total_dice[1] == total_dice[3]:
-                            held_dice == total_dice[0,3]
+                            held_dice == total_dice[0:4]
                         else:
-                            held_dice == total_dice[1,4]
+                            held_dice == total_dice[1:5]
                     elif state == 104:
                         if total_dice[0] == total_dice[1]:
-                            held_dice = total_dice[0:1]
+                            held_dice = total_dice[0:2]
                         elif total_dice[1] == total_dice[2]:
-                            held_dice = total_dice[1:2]
+                            held_dice = total_dice[1:3]
                         elif total_dice[2] == total_dice[3]:
-                            held_dice = total_dice[2:3]
+                            held_dice = total_dice[2:4]
                         elif total_dice[3] == total_dice[4]:
-                            held_dice = total_dice[3:4]
+                            held_dice = total_dice[3:5]
                     # If 5 unique values, hold no dice
-                
+            elif hand_type == Hand.FoK:
+                max_freq = check_max_freq(total_dice)
+                max_num = max_freq[0]
+                if turns_left == 1:
+                    if max_num == 1 and Hand.Ones in available_hands:
+                        card.setOnes(check_ones(total_dice))
+                    elif max_num == 2 and Hand.Twos in available_hands:
+                        card.setTwos(check_twos(total_dice))
+                    elif max_num == 3 and Hand.Threes in available_hands:
+                        card.setThrees(check_threes(total_dice))
+                    elif max_num == 4 and Hand.Fours in available_hands:
+                        card.setFours(check_fours(total_dice))
+                    elif max_num == 5 and Hand.Fives in available_hands:
+                        card.setFives(check_fives(total_dice))
+                    elif max_num == 6 and Hand.Sixes in available_hands:
+                        card.setSixes(check_sixes(total_dice))
+                    elif card.getChance() == -1:
+                        card.setChance(check_chance(total_dice))
+                    else:
+                        card.setFoK(check_four_kind(total_dice))
+                else:
+                    for die in range(0,max_freq[1]):
+                        held_dice.append(max_num)
+            elif hand_type == Hand.ToK:
+                max_freq = check_max_freq(total_dice)
+                max_num = max_freq[0]
+                if turns_left == 1:
+                    if max_num == 1 and Hand.Ones in available_hands:
+                        card.setOnes(check_ones(total_dice))
+                    elif max_num == 2 and Hand.Twos in available_hands:
+                        card.setTwos(check_twos(total_dice))
+                    elif max_num == 3 and Hand.Threes in available_hands:
+                        card.setThrees(check_threes(total_dice))
+                    elif max_num == 4 and Hand.Fours in available_hands:
+                        card.setFours(check_fours(total_dice))
+                    elif max_num == 5 and Hand.Fives in available_hands:
+                        card.setFives(check_fives(total_dice))
+                    elif max_num == 6 and Hand.Sixes in available_hands:
+                        card.setSixes(check_sixes(total_dice))
+                    elif card.getChance() == -1:
+                        card.setChance(check_chance(total_dice))
+                    else:
+                        card.setToK(check_three_kind(total_dice))
+                else:
+                    for die in range(max_freq[1]):
+                        held_dice.append(max_num)
+            elif hand_type == Hand.Sixes:
+                if turns_left == 1:
+                    if card.getChance() == -1:
+                        card.setChance(check_chance(total_dice))
+                    else:
+                        card.setSixes(check_sixes(total_dice))
+                else:
+                    freq = total_dice.count(6)
+                    for die in range(freq):
+                        held_dice.append(6)
+            elif hand_type == Hand.Fives:
+                if turns_left == 1:
+                    if card.getChance() == -1:
+                        card.setChance(check_chance(total_dice))
+                    else:
+                        card.setFives(check_fives(total_dice))
+                else:
+                    freq = total_dice.count(5)
+                    for die in range(freq):
+                        held_dice.append(5)
+            elif hand_type == Hand.Fours:
+                if turns_left == 1:
+                    if card.getChance() == -1:
+                        card.setChance(check_chance(total_dice))
+                    else:
+                        card.setFours(check_fours(total_dice))
+                else:
+                    freq = total_dice.count(4)
+                    for die in range(freq):
+                        held_dice.append(4)
+            elif hand_type == Hand.Threes:
+                if turns_left == 1:
+                    card.setThrees(check_threes(total_dice))      
+                else:
+                    freq = total_dice.count(3)
+                    for die in range(freq):
+                        held_dice.append(3)
+            elif hand_type == Hand.Twos:
+                if turns_left == 1:
+                    card.setTwos(check_twos(total_dice))      
+                else:
+                    freq = total_dice.count(2)
+                    for die in range(freq):
+                        held_dice.append(2)
+            elif hand_type == Hand.Ones:
+                if turns_left == 1:
+                    card.setOnes(check_ones(total_dice))      
+                else:
+                    freq = total_dice.count(1)
+                    for die in range(freq):
+                        held_dice.append(1)
+            else:
+                if turns_left == 1:
+                    card.setChance(check_chance(total_dice))
+                else:
+                    for die in total_dice:
+                        if die > 4:
+                            held_dice.append(die)
 
         turns_left-=1
+        print(held_dice)
+    return card
 
-playcard = PlayCard()
-take_turn(playcard)
+for i in range(1000):
+    playcard = PlayCard()
+    playcard = take_turn(playcard)
+    print(playcard.getOnes())
+    print(playcard.getTwos())
+    print(playcard.getThrees())
+    print(playcard.getFours())
+    print(playcard.getFives())
+    print(playcard.getSixes())
+    print(playcard.getToK())
+    print(playcard.getFoK())
+    print(playcard.getFullHouse())
+    print(playcard.getSmallStraight())
+    print(playcard.getLargeStraight())
+    print(playcard.getYacht())
+    print(playcard.getChance())
