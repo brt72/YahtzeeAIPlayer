@@ -1,4 +1,4 @@
-import Hand
+from Hand import HandTypes
 
 class PlayCard():
     ones = -1
@@ -155,29 +155,118 @@ class PlayCard():
     def availableHands(this):
         availableHands = []
         if this.getOnes() == -1:
-            availableHands.append(Hand.Ones)
+            availableHands.append(HandTypes.Ones)
         if this.getTwos() == -1:
-            availableHands.append(Hand.Twos)
+            availableHands.append(HandTypes.Twos)
         if this.getThrees() == -1:
-            availableHands.append(Hand.Threes)
+            availableHands.append(HandTypes.Threes)
         if this.getFours() == -1:
-            availableHands.append(Hand.Fours)
+            availableHands.append(HandTypes.Fours)
         if this.getFives() == -1:
-            availableHands.append(Hand.Fives)
+            availableHands.append(HandTypes.Fives)
         if this.getSixes() == -1:
-            availableHands.append(Hand.Sixes)
+            availableHands.append(HandTypes.Sixes)
         if this.getToK() == -1:
-            availableHands.append(Hand.ToK)
+            availableHands.append(HandTypes.ToK)
         if this.getFoK() == -1:
-            availableHands.append(Hand.FoK)
+            availableHands.append(HandTypes.FoK)
         if this.getFullHouse() == -1:
-            availableHands.append(Hand.FH)
+            availableHands.append(HandTypes.FH)
         if this.getSmallStraight() == -1:
-            availableHands.append(Hand.SS)
+            availableHands.append(HandTypes.SS)
         if this.getLargeStraight() == -1:
-            availableHands.append(Hand.LS)
+            availableHands.append(HandTypes.LS)
         if this.getYacht() == -1:
-            availableHands.append(Hand.Yacht)
+            availableHands.append(HandTypes.Yacht)
         if this.getChance() == -1:
-            availableHands.append(Hand.Yacht)      
+            availableHands.append(HandTypes.Yacht)      
         return availableHands
+
+    def __str__(this):
+        returnString = "\nYacht Playcard\n\n"
+        score = 0
+        if this.getOnes() == -1:
+            returnString = returnString + "Ones: 0\n"
+        else:
+            onesScore = this.getOnes()
+            score += onesScore
+            returnString = returnString + "Ones: " + str(onesScore) + "\n"
+        if this.getTwos() == -1:
+            returnString = returnString + "Twos: 0\n"
+        else:
+            twosScore = this.getTwos()
+            score += twosScore
+            returnString = returnString + "Twos: " + str(twosScore) + "\n"
+        if this.getThrees() == -1:
+            returnString = returnString + "Threes: 0\n"
+        else:
+            threesScore = this.getThrees()
+            score += threesScore
+            returnString = returnString + "Threes: " + str(threesScore) + "\n"
+        if this.getFours() == -1:
+            returnString = returnString + "Fours: 0\n"
+        else:
+            foursScore = this.getFours()
+            score += foursScore
+            returnString = returnString + "Fours: " + str(foursScore) + "\n"
+        if this.getFives() == -1:
+            returnString = returnString + "Fives: 0\n"
+        else:
+            fivesScore = this.getFives()
+            score += fivesScore
+            returnString = returnString + "Fives: " + str(fivesScore) + "\n"
+        if this.getSixes() == -1:
+            returnString = returnString + "Sixes: 0\n"
+        else:
+            sixesScore = this.getSixes()
+            score += sixesScore
+            returnString = returnString + "Sixes: " + str(sixesScore) + "\n"
+        if score >= 63:
+            score += 35
+            returnString = returnString + "Bonus: " + str(35) + "\n"
+        else:
+            returnString = returnString + "Bonus: " + str(0) + "\n"
+        if this.getToK() == -1:
+            returnString = returnString + "Three of a Kind: 0\n"
+        else:
+            tokScore = this.getToK()
+            score += tokScore
+            returnString = returnString + "Three of a Kind: " + str(tokScore) + "\n"
+        if this.getFoK() == -1:
+            returnString = returnString + "Four of a Kind: 0\n"
+        else:
+            fokScore = this.getFoK()
+            score += fokScore
+            returnString = returnString + "Four of a Kind: " + str(fokScore) + "\n"
+        if this.getFullHouse() == -1:
+            returnString = returnString + "Full House: 0\n"
+        else:
+            fhScore = this.getFullHouse()
+            score += fhScore
+            returnString = returnString + "Full House: " + str(fhScore) + "\n"
+        if this.getSmallStraight() == -1:
+            returnString = returnString + "Small Straight: 0\n"
+        else:
+            ssScore = this.getSmallStraight()
+            score += ssScore
+            returnString = returnString + "Small Straight: " + str(ssScore) + "\n"
+        if this.getLargeStraight() == -1:
+            returnString = returnString + "Large Straight: 0\n"
+        else:
+            lsScore = this.getLargeStraight()
+            score += lsScore
+            returnString = returnString + "Large Straight: " + str(lsScore) + "\n"
+        if this.getYacht() == -1:
+            returnString = returnString + "Yacht: 0\n"
+        else:
+            yachtScore = this.getYacht()
+            score += yachtScore
+            returnString = returnString + "Yacht: " + str(yachtScore) + "\n"
+        if this.getChance() == -1:
+            returnString = returnString + "Chance: 0\n"
+        else:
+            chanceScore = this.getChance()
+            score += chanceScore
+            returnString = returnString + "Chance: " + str(chanceScore) + "\n"
+        returnString = returnString + "\nTotal Score: " + str(score) +  "\n\n"
+        return returnString

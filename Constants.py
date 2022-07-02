@@ -1,4 +1,5 @@
 # Global Constants(Do Not Change The Values)
+CARD_SIZE = 14
 TOTAL_TURNS = 3
 LAST_TURN = 1
 

@@ -1,7 +1,6 @@
-
 from enum import Enum
 
-class Hand(Enum):
+class HandTypes(Enum):
     Nothing = 0
     Ones = 1
     Twos = 2

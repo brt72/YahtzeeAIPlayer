@@ -42,7 +42,7 @@ def check_three_kind(dice_list):
     total_dice = 0
     if total_dice <= 2:
         for number in range(6):
-            freq = dice_list.count( number+1)
+            freq = dice_list.count(number+1)
             if freq >= 3:
                 return sum(dice_list)
             else:
