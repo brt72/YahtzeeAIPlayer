@@ -1,106 +1,98 @@
-def check_max_freq(dice_list):
-    max_freq = 0
-    for num in range(6):
-        freq = dice_list.count(num+1)
-        if freq > max_freq:
-            max_freq = freq
-            max_num = num+1
-    return (max_num, max_freq)
+import re
+from Constants import *
+
+def checkMaxFreq(diceList):
+    maxFreq = 0
+    for num in range(MAX_DIE_VALUE):
+        freq = diceList.count(num+1)
+        if freq > maxFreq:
+            maxFreq = freq
+            maxNum = num+1
+    return (maxNum, maxFreq)
 
 # Checks how many points could be scored if "Ones" is selected
-def check_ones(dice_list):
-    num_freq = dice_list.count(1)
-    return 1*num_freq
+def checkOnes(diceList):
+    diceList = diceList.count(DIE_VALUE_ONE)
+    return DIE_VALUE_ONE*diceList
 
 # Checks how many points could be scored if "Twos" is selected
-def check_twos(dice_list):
-    num_freq = dice_list.count(2)
-    return 2*num_freq
+def checkTwos(diceList):
+    diceList = diceList.count(DIE_VALUE_TWO)
+    return DIE_VALUE_TWO*diceList
 
 # Checks how many points could be scored if "Threes" is selected
-def check_threes(dice_list):
-    num_freq = dice_list.count(3)
-    return 3*num_freq
+def checkThrees(diceList):
+    diceList = diceList.count(DIE_VALUE_THREE)
+    return DIE_VALUE_THREE*diceList
 
 # Checks how many points could be scored if "Fours" is selected
-def check_fours(dice_list):
-    num_freq = dice_list.count(4)
-    return 4*num_freq
+def checkFours(diceList):
+    diceList = diceList.count(DIE_VALUE_FOUR)
+    return DIE_VALUE_FOUR*diceList
 
 # Checks how many points could be scored if "Fives" is selected
-def check_fives(dice_list):
-    num_freq = dice_list.count(5)
-    return 5*num_freq
+def checkFives(diceList):
+    diceList = diceList.count(DIE_VALUE_FIVE)
+    return DIE_VALUE_FIVE*diceList
 
 # Checks how many points could be scored if "Sixes" is selected
-def check_sixes(dice_list):
-    num_freq = dice_list.count(6)
-    return 6*num_freq
+def checkSixes(diceList):
+    diceList = diceList.count(DIE_VALUE_SIX)
+    return DIE_VALUE_SIX*diceList
 
 # Checks how many points could be scored if "Three of a Kind" is selected
-def check_three_kind(dice_list):
-    total_dice = 0
-    if total_dice <= 2:
-        for number in range(6):
-            freq = dice_list.count(number+1)
-            if freq >= 3:
-                return sum(dice_list)
+def checkThreeKind(diceList):
+    diceFreq = 0
+    if diceFreq <= 2:
+        for number in range(MAX_DIE_VALUE):
+            freq = diceList.count(number+1)
+            if freq >= THREE_FREQ:
+                return sum(diceList)
             else:
-                total_dice += freq
-    return 0
+                diceFreq += freq
+    return POINTS_ZERO
 
 # Checks how many points could be scored if "Four of a Kind" is selected
-def check_four_kind(dice_list):
-    total_dice = 0
-    if total_dice <= 1:
-        for number in range(6):
-            freq = dice_list.count( number+1)
-            if freq >= 4:
-                return sum(dice_list)
+def checkFourKind(diceList):
+    diceFreq = 0
+    if diceFreq <= 1:
+        for number in range(MAX_DIE_VALUE):
+            freq = diceList.count( number+1)
+            if freq >= FOUR_FREQ:
+                return sum(diceList)
             else:
-                total_dice += freq
-    return 0
+                diceFreq += freq
+    return POINT_INDEX
 
 # Checks how many points could be scored if "Full House" is selected
-def check_full_house(dice_list):
-    total_dice = 0
-    tok_num = 0
-    if total_dice <= 2:
-        for number in range(6):
-            freq = dice_list.count( number+1)
-            if freq == 3:
-                tok_num = number+1
-            total_dice += freq
-    if(tok_num != 0):
-        for number in range(6):
-            freq = dice_list.count( number+1)
-            if freq == 2:
-                return 25
-    return 0
+def checkFullHouse(diceList):
+    if(diceList[DIE_INDEX_ZERO] == diceList[DIE_INDEX_ONE] and diceList[DIE_INDEX_TWO] == diceList[DIE_INDEX_FOUR]):
+        return POINTS_FULL_HOUSE
+    if(diceList[DIE_INDEX_ZERO] == diceList[DIE_INDEX_TWO] and diceList[DIE_INDEX_THREE] == diceList[DIE_INDEX_FOUR]):
+        return POINTS_FULL_HOUSE
+    return POINTS_ZERO
 
 # Checks how many points could be scored if "Small Straight" is selected
-def check_small_straight(dice_list):
-    if(dice_list[-1] - dice_list[0] >= 3):
-        if(dice_list[0]+1 == dice_list[1] and dice_list[1]+1 == dice_list[2] and dice_list[2]+1 == dice_list[3]):
-            return 30
-        if(dice_list[1]+1 == dice_list[2] and dice_list[2]+1 == dice_list[3] and dice_list[3]+1 == dice_list[4]):
-            return 30
-    return 0
+def checkSmallStraight(diceList):
+    if(diceList[DIE_INDEX_ZERO]+1 == diceList[DIE_INDEX_ONE] and diceList[DIE_INDEX_ONE]+1 == diceList[DIE_INDEX_TWO] and diceList[DIE_INDEX_TWO]+1 == diceList[DIE_INDEX_THREE]):
+        return POINTS_SMALL_STRAIGHT
+    if(diceList[DIE_INDEX_ONE]+1 == diceList[DIE_INDEX_TWO] and diceList[DIE_INDEX_TWO]+1 == diceList[DIE_INDEX_THREE] and diceList[DIE_INDEX_THREE]+1 == diceList[DIE_INDEX_FOUR]):
+        return POINTS_SMALL_STRAIGHT
+    return POINTS_ZERO
 
 # Checks how many points could be scored if "Large Straight" is selected
-def check_large_straight(dice_list):
-    if(dice_list[-1] - dice_list[0] == 4):
-        if(dice_list[0]+1 == dice_list[1] and dice_list[1]+1 == dice_list[2] and dice_list[2]+1 == dice_list[3]and dice_list[3]+1 == dice_list[4]):
-            return 40
-    return 0
+def checkLargeStraight(diceList):
+    if(diceList[DIE_INDEX_ZERO]+1 == diceList[DIE_INDEX_ONE] and diceList[DIE_INDEX_ONE]+1 == diceList[DIE_INDEX_TWO] and diceList[DIE_INDEX_TWO]+1 == diceList[DIE_INDEX_THREE] and diceList[DIE_INDEX_THREE]+1 == diceList[DIE_INDEX_FOUR]):
+        return POINTS_LARGE_STRAIGHT
+    return POINTS_ZERO
 
 # Checks how many points could be scored if "Yacht" is selected
-def check_yacht(dice_list):
-    freq = dice_list.count( dice_list[0])
-    if freq == 5:
-        return 50
-    return 0
+def checkYacht(diceList):
+    freq = diceList.count(diceList[DIE_INDEX_ZERO])
+    if freq == MAX_DICE:
+        return POINTS_YACHT
+    return POINTS_ZERO
 
 # Checks how many points could be scored if "Chance" is selected
-def check_chance(dice_list):
-    return(sum(dice_list))
+def checkChance(diceList):
+    return(sum(diceList))
