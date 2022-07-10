@@ -15,6 +15,7 @@ def roll(dice_amount):
 def takeTurn(card):
     turnsLeft = TOTAL_TURNS
     markCard = True
+    heldDice = []
     handType = HandTypes.Nothing
     availableHands = card.availableHands()
     while turnsLeft > 0 and markCard:
